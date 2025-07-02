@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dipankar | Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #111;
+      --primary: #0077ff;
+      --secondary: #f0f0f0;
+      --tertiary: (#c49c44);
+    }
+
+    body.dark {
+      --bg: #121212;
+      --text: #ffffff;
+      --primary: #00bfff;
+      --secondary: #333333;
+      --tertiary: (#1e5a9d);
+    }
+
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: 0.3s;
+      overflow-x: hidden;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Animated Background Gradient */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(-45deg, #1e3c72, #2a5298, #ff6f91, #ffc371);
+      background-size: 400% 400%;
+      z-index: -1;
+      animation: gradientBG 15s ease infinite;
+      opacity: 0.25;
+      transition: 0.3s;
+    }
+
+    body.dark::before {
+      background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1e3c72);
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50% }
+      50% { background-position: 100% 50% }
+      100% { background-position: 0% 50% }
+    }
+
+    header {
+      padding: 20px 40px;
+      background: var(--bg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: relative;
+      z-index: 2;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+    }
+
+    nav a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    #toggle {
+      font-size: 1.2rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+
+    section {
+      padding: 60px 20px;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .profile-img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      margin-bottom: 1rem;
+      border: 3px solid var(--primary);
+      object-fit: cover;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .btn {
+      padding: 10px 20px;
+      background: var(--primary);
+      color: white;
+      border-radius: 5px;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 15px;
+    }
+
+    /* Typing Animation */
+    .typing-effect {
+      font-size: 2rem;
+      font-weight: bold;
+      border-right: 2px solid var(--primary);
+      width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      
+      animation: typing 3s steps(20, end) forwards, blink 0.6s infinite;
+    }
+  
+    @keyframes typing {
+      from { width: 60 }
+      to { width: 70ch }
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent }
+    }
+
+    .socials a {
+      margin: 10px;
+      /* padding: 1px; */
+      display: inline-table;
+      width: 100px;
+      border-radius: 20px;
+      background: white;
+      text-decoration: none;
+      font-weight: bold;
+      color: #071a30;
+    }
+
+ 
+.icons, .projects {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+
+.icon-box, .project-box {
+      width: 180px;
+      padding: 15px;
+      background: white;
+      color: rgb(1, 88, 187);
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+      text-align: center;
+    }
+
+    .icon-box:hover, .project-box:hover {
+      transform: translateY(-5px);
+    }
+
+    .icon-box i {
+      font-size: 40px;
+      color: #5a55ae;
+    }
+    .icon-box p {
+      margin-top: 10px;
+      font-weight: 600;
+    }
+    
+
+    .project-gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+
+    /* Swiper Project Slider */
+    .swiper {
+      width: 90%;
+      padding: 30px 0;
+    }
+
+    .swiper-slide {
+      display: flex;
+      justify-content: center;
+    }
+
+    .card {
+      background: var(--secondary);
+      padding: 20px;
+      border-radius: 10px;
+      width: 250px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    /* Testimonials */
+    .testimonial-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .testimonial-card {
+      background: var(--secondary);
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 300px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Contact Form */
+    form {
+      max-width: 400px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    input, textarea {
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: var(--secondary);
+      color: var(--text);
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: var(--secondary);
+      position: relative;
+      z-index: 2;
+    }
+
+    @media(max-width: 600px) {
+      nav ul {
+        flex-direction: column;
+        align-items: flex-end;
+      }
+      .testimonial-container {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Dipankar</div>
+    <nav>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#testimonials">Testimonials</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><button id="toggle">🌙</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section id="home">
+    <img src="image/pp.1.jpg" class="profile-img" alt="Profile" />
+    <h1 class="typing-effect">Hi, I'm Dipankar Sarkar</h1>
+    <p>Frontend Developer | Coder | Designer</p>
+    <a href="#" class="btn">📄Download Resume</a>
+    <div class="socials">
+      <a href="https://github.com/yourgithub" target="_blank">🐙GitHub</a>
+      <a href="https://linkedin.com/in/yourlinkedin" target="_blank">💼LinkedIn</a>
+    </div>
+  </section>
+
+<!-- About Section -->
+  <section id="about">
+    <h2 class="section-title">Languages & Skills</h2>
+    <div class="icons">
+      <div class="icon-box"><i class="fab fa-html5"></i><p>HTML</p></div>
+      <div class="icon-box"><i class="fab fa-css3-alt"></i><p>CSS</p></div>
+      <div class="icon-box"><i class="fab fa-js"></i><p>JavaScript</p></div>
+      <div class="icon-box"><i class="fab fa-python"></i><p>Python</p></div>
+      <div class="icon-box"><i class="fab fa-java"></i><p>Java</p></div>
+      <div class="icon-box"><i class="fas fa-code"></i><p>C++</p></div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <h2>My Projects</h2>
+    <div class="swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="card">
+            <h3>Portfolio Website</h3>
+            <p>HTML, CSS, JS</p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="card">
+            <h3>To-Do List</h3>
+            <p>React, LocalStorage</p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="card">
+            <h3>Weather App</h3>
+            <p>API, JS</p>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <section id="testimonials">
+    <h2>Testimonials</h2>
+    <div class="testimonial-container">
+      <div class="testimonial-card">
+        <p>"Dipankar is a brilliant developer! His work is clean and on time."</p>
+        <h4>– Client A</h4>
+      </div>
+      <div class="testimonial-card">
+        <p>"Very impressed with the creativity and skills. Highly recommended!"</p>
+        <h4>– Client B</h4>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2>Contact Me</h2>
+    <form>
+      <input type="text" placeholder="Your Name" required />
+      <input type="email" placeholder="Your Email" required />
+      <textarea rows="5" placeholder="Your Message"></textarea>
+      <button class="btn">Send</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Dipankar Sarkar</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    // Dark mode toggle
+    const toggle = document.getElementById("toggle");
+    toggle.onclick = () => {
+      document.body.classList.toggle("dark");
+      toggle.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
+    };
+
+    // Swiper
+    const swiper = new Swiper(".swiper", {
+      loop: true,
+      autoplay: { delay: 3000 },
+      pagination: { el: ".swiper-pagination", clickable: true },
+    });
+  </script>
+</body>
+</html>
