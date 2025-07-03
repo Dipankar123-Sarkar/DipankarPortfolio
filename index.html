@@ -126,24 +126,28 @@
     }
 
     /* Typing Animation */
-    .typing-effect {
-      font-size: 2rem;
-      font-weight: bold;
-      border-right: 2px solid var(--primary);
-      width: 0;
-      overflow: hidden;
+    .typing-effect{
+      font-size: 2.5rem;
+      animation: slideInOut 4s ease-in-out infinite;
       white-space: nowrap;
-      
-      animation: typing 3s steps(20, end) forwards, blink 0.6s infinite;
     }
-  
-    @keyframes typing {
-      from { width: 60 }
-      to { width: 70ch }
-    }
-
-    @keyframes blink {
-      50% { border-color: transparent }
+    @keyframes slideInOut {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      25% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      75% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
     }
 
     .socials a {
