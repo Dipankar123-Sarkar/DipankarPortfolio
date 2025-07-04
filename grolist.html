@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Grolist App</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #fff7fb;
+    }
+    header {
+      background-color: #2e7d32;
+      color: white;
+      padding: 10px 20px;
+      font-size: 22px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn-clear {
+      background: #ef4444;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .form-section {
+      background: #e0f7fa;
+      padding: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+    .form-section input, .form-section button {
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .form-section button {
+      background: #2e7d32;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .item {
+      background: #fff9c4;
+      margin: 10px;
+      padding: 15px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .item-info {
+      flex: 1;
+      margin-left: 10px;
+    }
+    .item-info i {
+      font-style: italic;
+    }
+    .total {
+      background: #e3f2fd;
+      margin: 15px;
+      padding: 10px;
+      font-weight: bold;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .delete-btn, .restore-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+    }
+    .delete-btn { color: red; }
+    .restore-btn { color: #2563eb; }
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+    }
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      background: #4caf50;
+      color: white;
+      font-size: 14px;
+      padding: 10px 0;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .hidden {
+      display: none;
+    }
+    .export-btn {
+      display: block;
+      margin: 0 auto 80px;
+      background: #1d4ed8;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>Grolist</div>
+    <button class="btn-clear" onclick="clearAll()">Clear History</button>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn" onclick="switchTab('grocery')">🛒 Grocery List</button>
+    <button class="tab-btn" onclick="switchTab('history')">🕘 History</button>
+  </div>
+
+  <div class="form-section" id="formSection">
+    <input type="text" id="name" placeholder="Item Name">
+    <input type="number" id="price" placeholder="Price ₹">
+    <input type="number" id="qty" placeholder="Qty">
+    <input type="text" id="weight" placeholder="Weight (e.g. 1kg)">
+    <button onclick="addItem()">Add</button>
+  </div>
+
+  <div id="groceryTab">
+    <div id="itemList"></div>
+    <div class="total" id="totalDisplay">Total Bought: ₹0.00</div>
+    <button class="export-btn" onclick="exportPDF()">📄 Export to PDF</button>
+  </div>
+
+  <div id="historyTab" class="hidden">
+    <div id="historyList"></div>
+  </div>
+
+  <script>
+    let items = JSON.parse(localStorage.getItem('grolist_items')) || [];
+    let history = JSON.parse(localStorage.getItem('grolist_history')) || [];
+
+    function saveItems() {
+      localStorage.setItem('grolist_items', JSON.stringify(items));
+    }
+
+    function saveHistory() {
+      localStorage.setItem('grolist_history', JSON.stringify(history));
+    }
+
+    function addItem() {
+      const name = document.getElementById('name').value.trim();
+      const price = parseFloat(document.getElementById('price').value);
+      const qty = parseInt(document.getElementById('qty').value) || 1;
+      const weight = document.getElementById('weight').value.trim();
+
+      if (!name || isNaN(price)) return alert("Enter valid name and price");
+
+      items.push({ name, price, qty, weight, checked: true });
+      saveItems();
+      renderItems();
+      clearForm();
+    }
+
+    function clearForm() {
+      document.getElementById('name').value = '';
+      document.getElementById('price').value = '';
+      document.getElementById('qty').value = '';
+      document.getElementById('weight').value = '';
+    }
+
+    function renderItems() {
+      const container = document.getElementById('itemList');
+      container.innerHTML = '';
+      let total = 0;
+      items.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'item';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = item.checked;
+        checkbox.onchange = () => {
+          item.checked = checkbox.checked;
+          saveItems();
+          renderItems();
+        };
+
+        const info = document.createElement('div');
+        info.className = 'item-info';
+        info.innerHTML = `<i>${item.name}</i><br>₹${item.price.toFixed(2)}<br>${item.qty ? `Qty: ${item.qty}` : ''} ${item.weight ? `Weight: ${item.weight}` : ''}`;
+
+        const del = document.createElement('button');
+        del.innerHTML = '🗑️';
+        del.className = 'delete-btn';
+        del.onclick = () => {
+          history.push(item);
+          items.splice(index, 1);
+          saveItems();
+          saveHistory();
+          renderItems();
+          renderHistory();
+        };
+
+        div.appendChild(checkbox);
+        div.appendChild(info);
+        div.appendChild(del);
+        container.appendChild(div);
+
+        if (item.checked) total += item.price;
+      });
+
+      document.getElementById('totalDisplay').innerText = `Total Bought: ₹${total.toFixed(2)}`;
+    }
+
+    function renderHistory() {
+      const container = document.getElementById('historyList');
+      container.innerHTML = '<h3 style="padding-left:10px">Deleted Items</h3>';
+
+      if (history.length === 0) {
+        container.innerHTML += "<p style='padding-left:10px;'>No items in history.</p>";
+        return;
+      }
+
+      history.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `<div class="item-info"><i>${item.name}</i><br>₹${item.price.toFixed(2)}<br>${item.qty ? `Qty: ${item.qty}` : ''} ${item.weight ? `Weight: ${item.weight}` : ''}</div><button class="restore-btn" onclick="restoreItem(${index})">🔁</button>`;
+        container.appendChild(div);
+      });
+    }
+
+    function restoreItem(index) {
+      const restored = history.splice(index, 1)[0];
+      restored.checked = true;
+      items.push(restored);
+      saveItems();
+      saveHistory();
+      renderItems();
+      renderHistory();
+    }
+
+    function switchTab(tab) {
+      document.getElementById('groceryTab').classList.add('hidden');
+      document.getElementById('formSection').classList.add('hidden');
+      document.getElementById('historyTab').classList.add('hidden');
+
+      if (tab === 'grocery') {
+        document.getElementById('groceryTab').classList.remove('hidden');
+        document.getElementById('formSection').classList.remove('hidden');
+      } else {
+        document.getElementById('historyTab').classList.remove('hidden');
+      }
+    }
+
+    function clearAll() {
+      if (confirm("Clear all items and history?")) {
+        
+        history = [];
+        saveHistory();
+        renderHistory();
+      }
+    }
+
+    function exportPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      const boughtItems = items.filter(item => item.checked);
+      if (boughtItems.length === 0) return alert("No bought items to export.");
+
+      const tableData = boughtItems.map((item, i) => [
+        i + 1,
+        item.name,
+        item.qty || '-',
+        item.weight || '-',
+        `₹${item.price.toFixed(2)}`
+      ]);
+
+      doc.setFontSize(16);
+      doc.text("🛒 Grocery List (Bought Items)", 20, 15);
+
+      doc.autoTable({
+        startY: 25,
+        head: [["No", "Item Name", "Qty", "Weight", "Price"]],
+        body: tableData,
+        styles: { fontSize: 12, cellPadding: 4 },
+        headStyles: { fillColor: [46, 125, 50], textColor: [255, 255, 255] },
+      });
+
+      doc.save("Grolist.pdf");
+    }
+
+    renderItems();
+    renderHistory();
+  </script>
+</body>
+</html>
